@@ -263,3 +263,5 @@ class CurlyComponentLayoutCompiler {
     builder.attrs.static('class', 'ember-view');
   }
 }
+
+CurlyComponentLayoutCompiler.id = 'curly';

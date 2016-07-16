@@ -175,6 +175,8 @@ class TopLevelOutletLayoutCompiler {
   }
 }
 
+TopLevelOutletLayoutCompiler.id = 'top-level-outlet';
+
 class OutletComponentDefinition extends AbstractOutletComponentDefinition {
   constructor(outletName, template) {
     super(MANAGER, outletName, template);
@@ -190,3 +192,5 @@ class OutletLayoutCompiler {
     builder.wrapLayout(this.template.asLayout());
   }
 }
+
+OutletLayoutCompiler.id = 'outlet';

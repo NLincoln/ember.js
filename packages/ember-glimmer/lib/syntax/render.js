@@ -128,3 +128,5 @@ class RenderLayoutCompiler {
     builder.wrapLayout(this.template.asLayout());
   }
 }
+
+RenderLayoutCompiler.id = 'render';

@@ -143,7 +143,7 @@ export default class Environment extends GlimmerEnvironment {
         let compilable = new Compiler(template);
         return compileLayout(compilable, this);
       }, template => template.id);
-    }, Compiler => Compiler.name);
+    }, Compiler => Compiler.id);
 
     this.builtInModifiers = {
       action: new ActionModifierManager()
