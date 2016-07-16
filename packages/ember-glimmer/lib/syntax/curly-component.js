@@ -3,7 +3,6 @@ import { TO_ROOT_REFERENCE, AttributeBindingReference, applyClassNameBinding } f
 import { DIRTY_TAG, IS_DISPATCHING_ATTRS, HAS_BLOCK } from '../component';
 import { assert } from 'ember-metal/debug';
 import processArgs from '../utils/process-args';
-import { getOwner } from 'container/owner';
 import { privatize as P } from 'container/registry';
 import get from 'ember-metal/property_get';
 import { ComponentDefinition } from 'glimmer-runtime';

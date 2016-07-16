@@ -125,13 +125,13 @@ export default class Environment extends GlimmerEnvironment {
     super(dom);
     this.owner = owner;
 
-    this._definitionCache = new Cache(2000, ({name, source}) => {
+    this._definitionCache = new Cache(2000, ({ name, source }) => {
       let { component: ComponentClass, layout } = lookupComponent(owner, name, { source });
       if (ComponentClass || layout) {
         return new CurlyComponentDefinition(name, ComponentClass, layout);
       }
-    }, ({name, source}) => {
-      return source ? owner._resolveLocalLookupName(name, source) : name;
+    }, ({ name, source }) => {
+      return source && owner._resolveLocalLookupName(name, source) || name;
     });
 
     this._templateCache = new Cache(1000, Template => {
@@ -247,7 +247,7 @@ export default class Environment extends GlimmerEnvironment {
   getComponentDefinition(path, parentMeta) {
     let name = path[0];
     let source = parentMeta && `template:${parentMeta.moduleName}`;
-    return this._definitionCache.get({name, source});
+    return this._definitionCache.get({ name, source });
   }
 
   // normally templates should be exported at the proper module name
@@ -259,7 +259,7 @@ export default class Environment extends GlimmerEnvironment {
 
   // a Compiler can wrap the template so it needs its own cache
   getCompiledBlock(Compiler, template) {
-    let compilerCache = this._compilerCache.get(Compiler)
+    let compilerCache = this._compilerCache.get(Compiler);
     return compilerCache.get(template);
   }
 
