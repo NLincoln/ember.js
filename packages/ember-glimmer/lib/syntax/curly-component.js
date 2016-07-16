@@ -1,4 +1,4 @@
-import { StatementSyntax, ValueReference, compileLayout } from 'glimmer-runtime';
+import { StatementSyntax, ValueReference } from 'glimmer-runtime';
 import { TO_ROOT_REFERENCE, AttributeBindingReference, applyClassNameBinding } from '../utils/references';
 import { DIRTY_TAG, IS_DISPATCHING_ATTRS, HAS_BLOCK } from '../component';
 import { assert } from 'ember-metal/debug';
@@ -128,34 +128,28 @@ class CurlyComponentManager {
   }
 
   layoutFor(definition, bucket, env) {
-    if (definition.template) {
-      return compileLayout(new CurlyComponentLayoutCompiler(definition.template), env);
+    let template = definition.template;
+    if (!template) {
+      let { component } = bucket;
+      template = this.templateFor(component, env);
     }
+    return env.getCompiledBlock(CurlyComponentLayoutCompiler, template);
+  }
 
-    let { component } = bucket;
-    let template;
-    let TemplateFactory = component.layout;
-    // seen the definition but not the template
-    if (TemplateFactory) {
-      if (env._templateCache[TemplateFactory.id]) {
-        template = env._templateCache[TemplateFactory.id];
-      } else {
-        template = new TemplateFactory(env);
-        env._templateCache[TemplateFactory.id] = template;
-      }
-    } else {
-      let layoutName = component.layoutName && get(component, 'layoutName');
-      let owner = getOwner(component);
-
-      if (layoutName) {
-        template = owner.lookup('template:' + layoutName);
-      }
-      if (!template) {
-        template = owner.lookup(DEFAULT_LAYOUT);
+  templateFor(component, env) {
+    let Template = component.layout;
+    if (Template) {
+      return env.getTemplate(Template);
+    }
+    let { owner } = env;
+    let layoutName = get(component, 'layoutName');
+    if (layoutName) {
+      let template = owner.lookup('template:' + layoutName);
+      if (template) {
+        return template;
       }
     }
-
-    return compileLayout(new CurlyComponentLayoutCompiler(template), env);
+    return owner.lookup(DEFAULT_LAYOUT);
   }
 
   getSelf({ component }) {
@@ -254,7 +248,6 @@ export class CurlyComponentDefinition extends ComponentDefinition {
   constructor(name, ComponentClass, template) {
     super(name, MANAGER, ComponentClass || Component);
     this.template = template;
-    this._cache = undefined;
   }
 }
 
